@@ -1,0 +1,26 @@
+version: '3.5'
+
+services:
+  mysql-db:
+    image: mysql:8
+    container_name: mysql-db
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=sandbox
+    ports:
+      - "3306:3306"
+    restart: always
+
+  sandbox-app:
+    image: sandbox
+    container_name: sandbox-app
+    environment:
+      - JDBC_URL=jdbc:mysql://mysql-db:3306/sandbox?serverTimezone=UTC&createDatabaseIfNotExist=true&autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true
+    ports:
+      - "8080:8080"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    depends_on:
+      - "mysql-db"
